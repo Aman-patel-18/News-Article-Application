@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import NewsArticles from "./pages/NewsArticles";
 import About from "./pages/About";
 import Header from "./components/shared/Header";
+import { toast, Toaster } from "sonner";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/news" element={<NewsArticles />}></Route>
         <Route path="/about" element={<About />}></Route>
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 };
