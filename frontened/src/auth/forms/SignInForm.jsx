@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast, Toaster } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { signInFailure, signInStart, signInSuccess } from "@/redux/user/userSlice";
 
 
 const formSchema = z.object({
@@ -26,8 +28,8 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const dispatch=useDispatch()
+  const {loading, error: errorMessage}=useSelector((state)=> state.user)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -39,8 +41,7 @@ const SignInForm = () => {
 
   async function onSubmit(values) {
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart())
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,22 +51,21 @@ const SignInForm = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        setLoading(false);
         toast("sign in failed! try again")
-        return setErrorMessage(data.message);
+        dispatch(signInFailure(data.message))
       }
 
       if (res.ok) {
+        dispatch(signInSuccess(data))
         toast("Sign in successful")
         navigate("/");
       }
 
-      setLoading(false);
     } catch (error) {
-      setErrorMessage(error?.message || "Something went wrong");
-      setLoading(false);
       toast("Something went wrong")
+      dispatch(signInFailure(error.message))
     }
+    
   }
   return (
     <div className="min-h-screen mt-20">
