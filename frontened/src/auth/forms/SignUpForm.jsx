@@ -17,12 +17,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast, Toaster } from "sonner";
-
+import GoogleAuth from "@/components/shared/GoogleAuth";
 
 const formSchema = z.object({
-  username: z.string().min(2, {message: "Username must be atleast 2 characters"}),
-  email: z.string().min(0,{message: "Invalid email address"}),
-  password: z.string().min(8, {message: "password must be atleast 8 characters"}),
+  username: z
+    .string()
+    .min(2, { message: "Username must be atleast 2 characters" }),
+  email: z.string().min(0, { message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "password must be atleast 8 characters" }),
 });
 
 const SignUpForm = () => {
@@ -53,12 +57,12 @@ const SignUpForm = () => {
 
       if (data.success === false) {
         setLoading(false);
-        toast("sign up failed! try again")
+        toast("sign up failed! try again");
         return setErrorMessage(data.message);
       }
 
       if (res.ok) {
-        toast("Sign up successful")
+        toast("Sign up successful");
         navigate("/sign-in");
       }
 
@@ -66,7 +70,7 @@ const SignUpForm = () => {
     } catch (error) {
       setErrorMessage(error?.message || "Something went wrong");
       setLoading(false);
-      toast("Something went wrong")
+      toast("Something went wrong");
     }
   }
   return (
@@ -108,7 +112,7 @@ const SignUpForm = () => {
                     <FormControl>
                       <Input type="text" placeholder="Username" {...field} />
                     </FormControl>
-            
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -122,9 +126,13 @@ const SignUpForm = () => {
                     <FormLabel>Email</FormLabel>
 
                     <FormControl>
-                      <Input type="email" placeholder="xyz@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="xyz@example.com"
+                        {...field}
+                      />
                     </FormControl>
-            
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -138,25 +146,39 @@ const SignUpForm = () => {
                     <FormLabel>Password</FormLabel>
 
                     <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
                     </FormControl>
-            
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="bg-blue-500 w-full" disabled={loading}>
-                {loading?(<span className="animate-pulse">Loading</span>)
-                :(<span>Sign Up</span>)}
-                </Button>
+              <Button
+                type="submit"
+                className="bg-blue-500 w-full"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="animate-pulse">Loading</span>
+                ) : (
+                  <span>Sign Up</span>
+                )}
+              </Button>
+
+              <GoogleAuth />
             </form>
           </FormProvider>
 
           <div className="flex gap-2 text-sm mt-5">
             <span>Have an account?</span>
             <Link to={"/sign-in"} className="text-blue-500">
-            Sign In</Link>
+              Sign In
+            </Link>
           </div>
           {errorMessage && <p className="mt-5 text-red-500">{errorMessage}</p>}
         </div>

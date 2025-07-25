@@ -18,18 +18,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast, Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { signInFailure, signInStart, signInSuccess } from "@/redux/user/userSlice";
-
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "@/redux/user/userSlice";
+import GoogleAuth from "@/components/shared/GoogleAuth";
 
 const formSchema = z.object({
-  email: z.string().min(0,{message: "Invalid email address"}),
-  password: z.string().min(8, {message: "password must be atleast 8 characters"}),
+  email: z.string().min(0, { message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "password must be atleast 8 characters" }),
 });
 
 const SignInForm = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch()
-  const {loading, error: errorMessage}=useSelector((state)=> state.user)
+  const dispatch = useDispatch();
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -41,7 +47,7 @@ const SignInForm = () => {
 
   async function onSubmit(values) {
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,26 +57,23 @@ const SignInForm = () => {
       const data = await res.json();
 
       if (data.success === false) {
-        toast("sign in failed! try again")
-        dispatch(signInFailure(data.message))
+        toast("sign in failed! try again");
+        dispatch(signInFailure(data.message));
       }
 
       if (res.ok) {
-        dispatch(signInSuccess(data))
-        toast("Sign in successful")
+        dispatch(signInSuccess(data));
+        toast("Sign in successful");
         navigate("/");
       }
-
     } catch (error) {
-      toast("Something went wrong")
-      dispatch(signInFailure(error.message))
+      toast("Something went wrong");
+      dispatch(signInFailure(error.message));
     }
-    
   }
   return (
     <div className="min-h-screen mt-20">
-  <div className="flex p-3 max-w-5xl mx-auto flex-col md:flex-row md:items-start gap-10 md:gap-20">
-
+      <div className="flex p-3 max-w-5xl mx-auto flex-col md:flex-row md:items-start gap-10 md:gap-20">
         {/*left*/}
         <div className="md:w-[40%]">
           <Link
@@ -96,7 +99,6 @@ const SignInForm = () => {
         <div className="flex-1 md:w-[60%]">
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      
               <FormField
                 control={form.control}
                 name="email"
@@ -105,9 +107,13 @@ const SignInForm = () => {
                     <FormLabel>Email</FormLabel>
 
                     <FormControl>
-                      <Input type="email" placeholder="xyz@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="xyz@example.com"
+                        {...field}
+                      />
                     </FormControl>
-            
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -121,25 +127,38 @@ const SignInForm = () => {
                     <FormLabel>Password</FormLabel>
 
                     <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
                     </FormControl>
-            
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="bg-blue-500 w-full" disabled={loading}>
-                {loading?(<span className="animate-pulse">Loading</span>)
-                :(<span>Sign In</span>)}
-                </Button>
+              <Button
+                type="submit"
+                className="bg-blue-500 w-full"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="animate-pulse">Loading</span>
+                ) : (
+                  <span>Sign In</span>
+                )}
+              </Button>
+              <GoogleAuth />
             </form>
           </FormProvider>
 
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have an account?</span>
             <Link to={"/sign-up"} className="text-blue-500">
-            Sign Up</Link>
+              Sign Up
+            </Link>
           </div>
           {errorMessage && <p className="mt-5 text-red-500">{errorMessage}</p>}
         </div>
