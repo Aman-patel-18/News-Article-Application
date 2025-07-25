@@ -10,6 +10,7 @@ import NewsArticles from "./pages/NewsArticles";
 import About from "./pages/About";
 import Header from "./components/shared/Header";
 import { toast, Toaster } from "sonner";
+import Footer from "./components/shared/Footer";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/news" element={<NewsArticles />}></Route>
         <Route path="/about" element={<About />}></Route>
       </Routes>
+      <Footer/>
       <Toaster />
     </BrowserRouter>
   );
