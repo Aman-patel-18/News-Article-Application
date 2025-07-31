@@ -11,21 +11,24 @@ import About from "./pages/About";
 import Header from "./components/shared/Header";
 import { toast, Toaster } from "sonner";
 import Footer from "./components/shared/Footer";
+import PrivateRoute from "./components/shared/PrivateRoute";
 
 const App = () => {
   return (
     <BrowserRouter>
-    <Header/>
+      <Header />
       <Routes>
         <Route path="/sign-in" element={<SignInForm />}></Route>
         <Route path="/sign-up" element={<SignUpForm />}></Route>
 
         <Route path="/" element={<Home />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />}></Route>
+        </Route>
         <Route path="/news" element={<NewsArticles />}></Route>
         <Route path="/about" element={<About />}></Route>
       </Routes>
-      <Footer/>
+      <Footer />
       <Toaster />
     </BrowserRouter>
   );
