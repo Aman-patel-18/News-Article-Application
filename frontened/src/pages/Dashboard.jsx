@@ -9,7 +9,7 @@ const Dashboard = () => {
   const location=useLocation()
   const [tab, setTab]= useState("")
   useEffect(()=>{
-    const urlParams= new URLSearchParams(location, Search)
+    const urlParams= new URLSearchParams(location.search)
     const tabFromUrl=urlParams.get("tab")
 
     if(tabFromUrl){
@@ -28,7 +28,7 @@ const Dashboard = () => {
     <BottomNavBar/>
 
       {/* profile */}
-      <div>
+      <div className='w-full'>
         {tab==="profile" && <DahboardProfile/>}
       </div>
       </div>
