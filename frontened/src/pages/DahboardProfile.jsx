@@ -1,13 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getFilePreview, uploadFile } from "@/lib/appwrite/uploadImage";
+import { updateFailure, updateStart, updateSuccess } from "@/redux/user/userSlice";
 import React, { useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const DahboardProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
   const profilePicRef = useRef();
-  const [imagefile, setImageFile] = useState(null);
+  const dispatch=useDispatch()
+  const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [formData, setFormData]=useState({})
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -15,12 +20,64 @@ const DahboardProfile = () => {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
+  const handleChange=(e)=>{
+    setFormData({...formData, [e.target.id]: e.target.value})
+  }
+
+    const uploadImage = async () => {
+  if (!imageFile) return currentUser.profilePicture;
+  try {
+    const uploadedFile = await uploadFile(imageFile);
+
+    const profilePictureUrl = await getFilePreview(uploadedFile.$id);
+
+    return profilePictureUrl;
+  } catch (error) {
+    toast("Update user failed.");
+    return currentUser.profilePicture;
+  }
+};
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    try {
+      dispatch(updateStart())
+      // wait for image uploading
+      const profilePicture = await uploadImage()
+      const updateProfile = {
+        ...formData,
+        profilePicture,
+      }
+       const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method:"PUT",
+        headers:{
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateProfile)
+       })
+       const data =await res.json()
+       if(!res.ok){
+        dispatch(updateFailure(data.message))
+        toast("Update user failed")
+       }
+       else{
+        dispatch(updateSuccess(data))
+        toast("User updated successfully")
+       }
+    } catch (error) {
+      dispatch(updateFailure(error.message))
+      toast("Update user failed")
+      return currentUser.profilePicture;
+    }
+  }
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">
         Update your Profile
       </h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           type="file"
           accept="image/*"
@@ -42,6 +99,7 @@ const DahboardProfile = () => {
           placeholder="username"
           defaultValue={currentUser.username}
           className="h-12 border border-slate-400 focus-visible:ring-offset-0"
+          onChange={handleChange}
         />
 
         <Input
@@ -51,6 +109,7 @@ const DahboardProfile = () => {
           defaultValue={currentUser.email}
           className="h-12 border border-slate-400 focus-visible:ring-offset-0"
           //disabled
+          onChange={handleChange}
         />
 
         <Input
@@ -58,6 +117,7 @@ const DahboardProfile = () => {
           id="password"
           placeholder="********"
           className="h-12 border border-slate-400 focus-visible:ring-offset-0"
+          onChange={handleChange}
         />
         <Button type="submit" className="h-12 bg-green-600">
           Update Profile

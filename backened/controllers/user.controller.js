@@ -36,7 +36,7 @@ export const updateUser = async (req, res, next) => {
       )
     }
   }
-
+  console.log("➡️ Received profilePicture:", req.body.profilePicture);
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
