@@ -1,9 +1,31 @@
+import { signOutSuccess } from '@/redux/user/userSlice';
 import React from 'react'
 import { FaUserAlt } from 'react-icons/fa'
 import { TbLogout2 } from "react-icons/tb";
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 
 const DashboardSidebar = () => {
+    const dispatch=useDispatch()
+
+    const handleSignout = async () => {
+        try {
+          const res = await fetch("/api/user/signout", {
+            method: "POST",
+          })
+    
+          const data = await res.json()
+    
+          if (!res.ok) {
+            console.log(data.message)
+          } else {
+            dispatch(signOutSuccess())
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
   return (
     <aside className='h-screen w-64 bg-slate-200 text-slate-950 flex flex-col'>
         {/* Logo/Header */}
@@ -23,7 +45,7 @@ const DashboardSidebar = () => {
             </ul>
 
             <div className='p-4 border-t border-slate-700'></div>
-            <button className='flex items-center w-full p-2 hover:bg-slate-300 rounded'>
+            <button className='flex items-center w-full p-2 hover:bg-slate-300 rounded' onClick={handleSignout}>
                 <TbLogout2 className='mr-3'/>
                 <span>Logout</span>
             </button>

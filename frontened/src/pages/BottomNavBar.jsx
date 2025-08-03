@@ -1,7 +1,30 @@
+import { signOutSuccess } from '@/redux/user/userSlice'
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const BottomNavBar = () => {
+
+  const dispatch= useDispatch()
+
+    const handleSignout = async () => {
+        try {
+          const res = await fetch("/api/user/signout", {
+            method: "POST",
+          })
+    
+          const data = await res.json()
+    
+          if (!res.ok) {
+            console.log(data.message)
+          } else {
+            dispatch(signOutSuccess())
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-200 border-t border-slate-300 px-2 py-1 flex justify-around items-center h-12">
   <Link to="/" className="flex flex-col items-center text-slate-800 justify-center flex-1">
@@ -16,7 +39,7 @@ const BottomNavBar = () => {
 
   <div className="w-px h-full bg-slate-700" />
 
-  <button className="flex flex-col items-center text-slate-800 justify-center flex-1">
+  <button className="flex flex-col items-center text-slate-800 justify-center flex-1" onClick={handleSignout}>
     <span className="text-xs">Logout</span>
   </button>
 </nav>

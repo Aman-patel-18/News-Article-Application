@@ -2,7 +2,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getFilePreview, uploadFile } from "@/lib/appwrite/uploadImage";
-import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateFailure, updateStart, updateSuccess } from "@/redux/user/userSlice";
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutSuccess, updateFailure, updateStart, updateSuccess } from "@/redux/user/userSlice";
 import { Ghost } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -94,6 +94,23 @@ const DahboardProfile = () => {
     }
   }
 
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        console.log(data.message)
+      } else {
+        dispatch(signOutSuccess())
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
@@ -176,7 +193,8 @@ const DahboardProfile = () => {
         
         </AlertDialog>
         
-        <Button variant="ghost" className="hover:text-red-700  cursor-pointer">Log out</Button>
+        <Button variant="ghost" className="hover:text-red-700  cursor-pointer"
+        onClick={handleSignout}>Log out</Button>
       </div>
       <p className="text-red-600">{error}</p>
     </div>
