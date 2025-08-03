@@ -1,13 +1,15 @@
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getFilePreview, uploadFile } from "@/lib/appwrite/uploadImage";
-import { updateFailure, updateStart, updateSuccess } from "@/redux/user/userSlice";
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateFailure, updateStart, updateSuccess } from "@/redux/user/userSlice";
+import { Ghost } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 const DahboardProfile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const profilePicRef = useRef();
   const dispatch=useDispatch()
   const [imageFile, setImageFile] = useState(null);
@@ -72,6 +74,27 @@ const DahboardProfile = () => {
     }
   }
 
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart())
+      const res=await fetch(`/api/user/delete/${currentUser._id}`,{
+        method: "DELETE",
+      })
+      const data = await res.json()
+      if(!res.ok){
+        dispatch(deleteUserFailure(data.message))
+        toast("delete user failed")
+      }
+      else{
+        dispatch(deleteUserSuccess())
+        toast("deleted user successfully")
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
+  }
+
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">
@@ -124,11 +147,38 @@ const DahboardProfile = () => {
         </Button>
       </form>
       <div className="flex text-red-400 justify-between cursor-pointer mt-5">
-        <span className="hover:text-red-700 cursor-pointer">
-          Delete Profile
-        </span>
-        <span className="hover:text-red-700  cursor-pointer">Log out</span>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" className="hover:text-red-700 cursor-pointer">
+              Delete Profile
+            </Button>
+          </AlertDialogTrigger>
+
+
+          <AlertDialogContent>
+        
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        
+        </AlertDialogHeader>
+        
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDeleteUser}>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      
+      </AlertDialogContent>
+        
+        </AlertDialog>
+        
+        <Button variant="ghost" className="hover:text-red-700  cursor-pointer">Log out</Button>
       </div>
+      <p className="text-red-600">{error}</p>
     </div>
   );
 };
