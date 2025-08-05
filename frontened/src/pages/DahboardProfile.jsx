@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 const DahboardProfile = () => {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const profilePicRef = useRef();
   const dispatch=useDispatch()
   const [imageFile, setImageFile] = useState(null);
@@ -159,8 +159,8 @@ const DahboardProfile = () => {
           className="h-12 border border-slate-400 focus-visible:ring-offset-0"
           onChange={handleChange}
         />
-        <Button type="submit" className="h-12 bg-green-600">
-          Update Profile
+        <Button type="submit" className="h-12 bg-green-600" disabled={loading}>
+          {loading? "Loading...": "Update Profile"}
         </Button>
       </form>
       <div className="flex text-red-400 justify-between cursor-pointer mt-5">

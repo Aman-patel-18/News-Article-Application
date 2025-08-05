@@ -2,12 +2,13 @@ import { signOutSuccess } from '@/redux/user/userSlice';
 import React from 'react'
 import { FaUserAlt } from 'react-icons/fa'
 import { TbLogout2 } from "react-icons/tb";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
-
+import { IoIosCreate } from "react-icons/io";
 const DashboardSidebar = () => {
     const dispatch=useDispatch()
-
+    const {currentUser}= useSelector((state)=>
+        state.user)
     const handleSignout = async () => {
         try {
           const res = await fetch("/api/user/signout", {
@@ -35,13 +36,21 @@ const DashboardSidebar = () => {
 
         {/* Navigation Links */}
         <nav className='flex-1 p-4'>
-            <ul className='space-y-4'>
+            <ul className='space-y-0'>
                 <li>
                     <Link to={"/dashboard?tab=profile"} className='flex items-center p-2 hover:bg-slate-300 rounded'>
                     <FaUserAlt className="mr-3" />
                     <span>
                         Profile</span></Link>
                 </li>
+                {currentUser && currentUser.isAdmin && (
+                  <li>
+                    <Link to={"/create-post"} className='flex items-center p-2 hover:bg-slate-300 rounded'>
+                    <IoIosCreate className="mr-3" />
+                    <span>
+                        Create Post</span></Link>
+                </li>
+                )}
             </ul>
 
             <div className='p-4 border-t border-slate-700'></div>
