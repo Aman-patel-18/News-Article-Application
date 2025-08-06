@@ -20,10 +20,10 @@ const postSchema = new mongoose.Schema(
       default:
         "https://images.pexels.com/photos/518543/pexels-photo-518543.jpeg",
     },
-    // content: {
-    //   type: String,
-    //   required: true,
-    // },
+    content: {
+      type: String,
+      required: true,
+    },
     slug: {
       type: String,
       required: true,
